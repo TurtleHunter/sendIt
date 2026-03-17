@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <style>
+    body{margin:0;padding:0;background:#f4f4f5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+    .wrapper{max-width:560px;margin:40px auto;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+    .header{padding:28px 32px;background:#1e293b}.header .app-name{color:#f8fafc;font-size:18px;font-weight:600}
+    .header img{height:32px}
+    .body{padding:32px;color:#374151;font-size:15px;line-height:1.6}
+    .body h1{margin:0 0 16px;font-size:20px;color:#111827}
+    .body p{margin:0 0 16px}
+    .change-row{display:flex;gap:12px;margin:16px 0}
+    .change-box{flex:1;padding:12px;background:#f8fafc;border-radius:6px;font-size:13px}
+    .change-box .label{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:#9ca3af;margin-bottom:6px}
+    .added{color:#166534}.removed{color:#991b1b}
+    .footer{padding:20px 32px;background:#f8fafc;border-top:1px solid #e5e7eb;font-size:12px;color:#9ca3af}
+  </style>
+</head>
+<body>
+<div class="wrapper">
+  <div class="header">
+    {{#if app.logo_url}}<img src="{{app.logo_url}}" alt="{{app.from_name}}"/>
+    {{else}}<span class="app-name">{{app.from_name}}</span>{{/if}}
+  </div>
+  <div class="body">
+    <h1>Your permissions have been updated</h1>
+    <p>Hi{{#if name}} {{name}}{{/if}}, an administrator has updated your permissions on <strong>{{app.from_name}}</strong>.</p>
+    {{#if rolesAdded}}
+    <div class="change-box">
+      <div class="label">Roles added</div>
+      <span class="added">{{rolesAdded}}</span>
+    </div>
+    {{/if}}
+    {{#if rolesRemoved}}
+    <div class="change-box">
+      <div class="label">Roles removed</div>
+      <span class="removed">{{rolesRemoved}}</span>
+    </div>
+    {{/if}}
+    {{#if groupsAdded}}
+    <div class="change-box">
+      <div class="label">Groups added</div>
+      <span class="added">{{groupsAdded}}</span>
+    </div>
+    {{/if}}
+    {{#if groupsRemoved}}
+    <div class="change-box">
+      <div class="label">Groups removed</div>
+      <span class="removed">{{groupsRemoved}}</span>
+    </div>
+    {{/if}}
+    <p>These changes take effect immediately. If you have questions, contact your administrator.</p>
+  </div>
+  <div class="footer">
+    This notification was sent because your permissions changed on {{app.from_name}}.
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "sendit.fullname" . }}
+  labels:
+    {{- include "sendit.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "sendit.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "sendit.selectorLabels" . | nindent 8 }}
+    spec:
+      serviceAccountName: {{ include "sendit.fullname" . }}
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+      containers:
+        - name: sendit
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: 3000
+          env:
+            # Non-sensitive config from values
+            - name: PORT
+              value: {{ .Values.env.PORT | quote }}
+            - name: NODE_ENV
+              value: {{ .Values.env.NODE_ENV | quote }}
+            - name: SMTP_PORT
+              value: {{ .Values.env.SMTP_PORT | quote }}
+            - name: SMTP_SECURE
+              value: {{ .Values.env.SMTP_SECURE | quote }}
+            - name: DEFAULT_FROM_NAME
+              value: {{ .Values.env.DEFAULT_FROM_NAME | quote }}
+            # Sensitive config from secrets
+            - name: SMTP_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: sendit-secrets
+                  key: {{ .Values.secretRefs.smtpHost }}
+            - name: SMTP_USER
+              valueFrom:
+                secretKeyRef:
+                  name: sendit-secrets
+                  key: {{ .Values.secretRefs.smtpUser }}
+            - name: SMTP_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: sendit-secrets
+                  key: {{ .Values.secretRefs.smtpPass }}
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: sendit-secrets
+                  key: {{ .Values.secretRefs.databaseUrl }}
+            - name: API_KEYS
+              valueFrom:
+                secretKeyRef:
+                  name: sendit-secrets
+                  key: {{ .Values.secretRefs.apiKeys }}
+            - name: DEFAULT_FROM_ADDRESS
+              valueFrom:
+                secretKeyRef:
+                  name: sendit-secrets
+                  key: {{ .Values.secretRefs.defaultFromAddress }}
+          livenessProbe:
+            {{- toYaml .Values.livenessProbe | nindent 12 }}
+          readinessProbe:
+            {{- toYaml .Values.readinessProbe | nindent 12 }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}

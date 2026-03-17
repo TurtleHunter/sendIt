@@ -1,0 +1,40 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "sendit.fullname" . }}
+  labels:
+    {{- include "sendit.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      {{- include "sendit.selectorLabels" . | nindent 6 }}
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    # Only allow traffic from pods labelled as internal callers
+    # Tag your webapp deployments with sendit-client: "true"
+    - from:
+        - podSelector:
+            matchLabels:
+              sendit-client: "true"
+      ports:
+        - protocol: TCP
+          port: 3000
+  egress:
+    # Postgres
+    - ports:
+        - protocol: TCP
+          port: 5432
+    # SMTP (adjust port to match your SMTP_PORT)
+    - ports:
+        - protocol: TCP
+          port: 587
+        - protocol: TCP
+          port: 465
+        - protocol: TCP
+          port: 25
+    # DNS
+    - ports:
+        - protocol: UDP
+          port: 53

@@ -1,0 +1,20 @@
+{
+	"name": "@sendit/root",
+	"private": true,
+	"workspaces": [
+		"packages/*"
+	],
+	"scripts": {
+		"dev": "npm run dev -w packages/server",
+		"build:client": "npm run build -w packages/client",
+		"build:server": "npm run build -w packages/server",
+		"build": "npm run build --workspaces",
+		"check": "biome check --write .",
+		"format": "biome format --write .",
+		"lint": "biome lint --write ."
+	},
+	"devDependencies": {
+		"@biomejs/biome": "2.4.7",
+		"typescript": "^5.9.3"
+	}
+}
